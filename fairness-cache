@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Rebuilds the FAIR score cache for the configured portal by assessing every
+# ontology it exposes. The web service only reads this cache (with
+# CACHE_ENABLED=true), so run this after loading ontologies and on a schedule.
+# Run it through the image's entrypoint, which writes the portal configuration.
+set -euo pipefail
+cd /usr/local/tomcat/webapps/ROOT/WEB-INF
+exec java ${FAIRNESS_CACHE_JAVA_OPTS:-} \
+  -Djava.util.logging.config.file=./classes/logging.properties \
+  -cp "lib/*:classes" \
+  fr.lirmm.fairness.assessment.CacheSaverCMD "${SERVER_DEFAULT_PORTAL:-ontoportal}"
